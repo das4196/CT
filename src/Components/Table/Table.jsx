@@ -1,60 +1,62 @@
-import React, { useContext, useEffect, useState } from "react";
+ import React, { useContext, useEffect, useState } from "react";
 import "./Table.css";
-import ReactTable from "react-table-6";
-
 import { DataContext } from "../../ContextAPI/DataContext";
 import { Export } from "../Export/Export";
 
 const Table = () => {
-  //Getting current date
+  // Getting current date
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
-  var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+  var mm = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
   var yyyy = today.getFullYear();
 
   today = yyyy + "-" + mm + "-" + dd;
 
-  //Context values
+  // Context values
   const { tableData, setDateFrom, setDateTo, cityName, setFileName } =
     useContext(DataContext);
 
-  // initializing the state variables
-
+  // Initializing the state variables
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDateTo, setSelectedDateTo] = useState(null);
   const [error, setError] = useState("");
 
-  const columns = [
-    { Header: "Date", accessor: "date" },
-    { Header: "Total Cases", accessor: "totalCases" },
-    { Header: "Active Cases", accessor: "activeCases" },
-    { Header: "Recovered", accessor: "recovered" },
-  ];
-
-  //Generating table and details on button click also checking all possible error conditions
+  // Generating table and details on button click also checking all possible error conditions
   const handlechangedate = () => {
     if (selectedDateTo < selectedDate) {
-      setError("Incorrect format , please select a valid date");
+      setError("Incorrect format, please select a valid date");
     } else if (selectedDate > today) {
-      setError("Selected date is in future!");
+      setError("Selected date is in the future!");
     } else if (selectedDateTo && selectedDate) {
       setDateFrom(selectedDate);
       setDateTo(selectedDateTo);
       setError("");
     } else {
-      setError("Please select a From and to dates");
+      setError("Please select From and To dates");
     }
   };
-  // Setting intial value
+
+  // Setting initial value
   useEffect(() => {
     setFileName(`${cityName}.csv`);
   }, [cityName]);
+
+  const renderTableRows = () => {
+    return tableData.map((item, index) => (
+      <tr key={index}>
+        <td>{item.date}</td>
+        <td>{item.totalCases}</td>
+        <td>{item.activeCases}</td>
+        <td>{item.recovered}</td>
+      </tr>
+    ));
+  };
 
   return (
     <div className="table-container">
       <div className="date">
         <div className="date-main">
-          <h4>Choose the dates to generate customised results </h4>
+          <h4>Choose the dates to generate customised results</h4>
           {/* date input from and to */}
           <input
             type="date"
@@ -82,13 +84,37 @@ const Table = () => {
         </button>
       </div>
 
-      {/* // React table to show items. */}
-      <ReactTable
-        data={tableData}
-        columns={columns}
-        style={{ textAlign: "center" }}
-        pageSize={8}
-      />
+      {/* Bootstrap-styled table */}
+
+      {/* Bootstrap-styled table with scrollbar */}
+      {/* Custom-styled table with scrollbar */}
+
+      {/* Custom-styled table with scrollbar */}
+      <div
+        className="custom-table-container"
+        style={{ overflow: "auto", width: "100%", height: "386px" }}
+      >
+        <table
+          className="custom-table table table-striped table-hover"
+          style={{ width: "100%" }}
+        >
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Total Cases</th>
+              <th>Active Cases</th>
+              <th>Recovered</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Limit to show a maximum of 10 items */}
+            {renderTableRows()}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Add a scrollbar to the table if there are more than 10 items */}
+
       <Export />
     </div>
   );

@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import "./CaseCard.css";
-import "react-table-6/react-table.css";
 import { CaseDisplay } from "./CaseDisplay";
 
 import { DataContext } from "../../ContextAPI/DataContext";
